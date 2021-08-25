@@ -1,0 +1,26 @@
+---
+
+- name: 'Install SSH Host public keys'
+  template:
+    src: host_key.j2
+    dest: "/etc/ssh/ssh_host_{{ item.type }}_key.pub"
+    owner: "root"
+    group: "root"
+    mode: "644"
+  notify: reload_sshd
+  vars:
+    __host_key_content: '{{ item.key }}'
+  loop: "{{ sshd_host_keys | selectattr('public', 'true') }}"
+
+- name: 'Install SSH Host private keys'
+  template:
+    src: host_key.j2
+    dest: "/etc/ssh/ssh_host_{{ item.type }}_key"
+    owner: "root"
+    group: "ssh_keys"
+    mode: "640"
+  notify: reload_sshd
+  vars:
+    __host_key_content: '{{ item.key }}'
+  loop: "{{ sshd_host_keys | selectattr('public', 'false') }}"
+

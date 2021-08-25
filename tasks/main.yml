@@ -1,4 +1,7 @@
 ---
 
+- include_tasks: host_keys.yml
+  when: sshd_host_keys is defined
+
 - include_tasks: sshd.yml
   when: sshd_enable|bool
